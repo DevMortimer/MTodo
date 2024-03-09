@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mtodo/features/todo/presentation/todo_page.dart';
+import 'package:mtodo/features/todo/todo.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 void main() async {
   runApp(const ProviderScope(child: MainApp()));
@@ -11,9 +12,11 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: TodoPage(),
-    );
+    return ResponsiveSizer(builder: (context, orientation, screenType) {
+      return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: TodoPage(),
+      );
+    });
   }
 }

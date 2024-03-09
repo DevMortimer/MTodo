@@ -57,12 +57,7 @@ int _todoEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
-  {
-    final value = object.details;
-    if (value != null) {
-      bytesCount += 3 + value.length * 3;
-    }
-  }
+  bytesCount += 3 + object.details.length * 3;
   return bytesCount;
 }
 
@@ -81,8 +76,9 @@ Todo _todoDeserialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  final object = Todo();
-  object.details = reader.readStringOrNull(offsets[0]);
+  final object = Todo(
+    details: reader.readString(offsets[0]),
+  );
   object.id = id;
   return object;
 }
@@ -95,7 +91,7 @@ P _todoDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -195,27 +191,7 @@ extension TodoQueryWhere on QueryBuilder<Todo, Todo, QWhereClause> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterWhereClause> detailsIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'details',
-        value: [null],
-      ));
-    });
-  }
-
-  QueryBuilder<Todo, Todo, QAfterWhereClause> detailsIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'details',
-        lower: [null],
-        includeLower: false,
-        upper: [],
-      ));
-    });
-  }
-
-  QueryBuilder<Todo, Todo, QAfterWhereClause> detailsEqualTo(String? details) {
+  QueryBuilder<Todo, Todo, QAfterWhereClause> detailsEqualTo(String details) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IndexWhereClause.equalTo(
         indexName: r'details',
@@ -225,7 +201,7 @@ extension TodoQueryWhere on QueryBuilder<Todo, Todo, QWhereClause> {
   }
 
   QueryBuilder<Todo, Todo, QAfterWhereClause> detailsNotEqualTo(
-      String? details) {
+      String details) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -260,7 +236,7 @@ extension TodoQueryWhere on QueryBuilder<Todo, Todo, QWhereClause> {
   }
 
   QueryBuilder<Todo, Todo, QAfterWhereClause> detailsGreaterThan(
-    String? details, {
+    String details, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -274,7 +250,7 @@ extension TodoQueryWhere on QueryBuilder<Todo, Todo, QWhereClause> {
   }
 
   QueryBuilder<Todo, Todo, QAfterWhereClause> detailsLessThan(
-    String? details, {
+    String details, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -288,8 +264,8 @@ extension TodoQueryWhere on QueryBuilder<Todo, Todo, QWhereClause> {
   }
 
   QueryBuilder<Todo, Todo, QAfterWhereClause> detailsBetween(
-    String? lowerDetails,
-    String? upperDetails, {
+    String lowerDetails,
+    String upperDetails, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
@@ -352,24 +328,8 @@ extension TodoQueryWhere on QueryBuilder<Todo, Todo, QWhereClause> {
 }
 
 extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> detailsIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'details',
-      ));
-    });
-  }
-
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> detailsIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'details',
-      ));
-    });
-  }
-
   QueryBuilder<Todo, Todo, QAfterFilterCondition> detailsEqualTo(
-    String? value, {
+    String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -382,7 +342,7 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
   }
 
   QueryBuilder<Todo, Todo, QAfterFilterCondition> detailsGreaterThan(
-    String? value, {
+    String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -397,7 +357,7 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
   }
 
   QueryBuilder<Todo, Todo, QAfterFilterCondition> detailsLessThan(
-    String? value, {
+    String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -412,8 +372,8 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
   }
 
   QueryBuilder<Todo, Todo, QAfterFilterCondition> detailsBetween(
-    String? lower,
-    String? upper, {
+    String lower,
+    String upper, {
     bool includeLower = true,
     bool includeUpper = true,
     bool caseSensitive = true,
@@ -609,7 +569,7 @@ extension TodoQueryProperty on QueryBuilder<Todo, Todo, QQueryProperty> {
     });
   }
 
-  QueryBuilder<Todo, String?, QQueryOperations> detailsProperty() {
+  QueryBuilder<Todo, String, QQueryOperations> detailsProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'details');
     });
