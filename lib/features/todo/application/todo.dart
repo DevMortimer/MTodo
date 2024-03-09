@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:isar/isar.dart';
 import 'package:mtodo/constants/isar.dart';
 import 'package:mtodo/features/todo/domain/todo.dart';
@@ -30,7 +32,21 @@ Future<void> updateTodo(UpdateTodoRef ref, Id id, String newDetail) async {
   });
 }
 
-// DELETE
+// TOGGLE
+@riverpod
+Future<void> toggleTodo(ToggleTodoRef ref, Id id) async {
+  final isar = await ref.watch(getDatabaseProvider.future);
+  Todo? todo = await isar.todos.where().idEqualTo(id).findFirst();
+
+  if (todo != null) {
+    await isar.writeTxn(() async {
+      todo.done = !todo.done;
+      isar.todos.put(todo);
+    });
+  }
+}
+
+// TOGGLE
 @riverpod
 Future<void> deleteTodo(DeleteTodoRef ref, Id id) async {
   final isar = await ref.watch(getDatabaseProvider.future);

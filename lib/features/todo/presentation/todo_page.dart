@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mtodo/common_widgets/appbar.dart';
 import 'package:mtodo/constants/isar.dart';
@@ -9,27 +10,18 @@ import 'package:skeletonizer/skeletonizer.dart';
 class TodoPage extends ConsumerWidget {
   TodoPage({super.key});
 
-  final textEditingController = TextEditingController();
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final database = ref.watch(getDatabaseProvider);
-
-    int maxLength = 25;
-    textEditingController.addListener(() {
-      if (textEditingController.text.length > maxLength) {
-        textEditingController.text = textEditingController.text.substring(
-          0,
-          maxLength,
-        );
-      }
-    });
+    final textEditingController = ref.watch(textEditingControllerProvider);
 
     return Scaffold(
-      appBar: MAppBar(),
+      appBar: MAppBar(context),
       body: SingleChildScrollView(
         child: Column(
           children: [
+            SizedBox(height: 4.h),
+
             // List of Todos
             database.when(
               error: (error, stacktrace) =>
@@ -57,6 +49,7 @@ class TodoPage extends ConsumerWidget {
                       return ListView.builder(
                         scrollDirection: Axis.vertical,
                         shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
                         itemCount: data.length,
                         itemBuilder: (context, index) {
                           return Padding(
@@ -67,12 +60,24 @@ class TodoPage extends ConsumerWidget {
                                   child: ListTile(
                                     title: Text(data[index].details),
                                     leading: IconButton(
+                                      icon: data[index].done
+                                          ? const Icon(Icons.check_box)
+                                          : const Icon(
+                                              Icons.check_box_outline_blank),
+                                      onPressed: () async {
+                                        await ref.read(
+                                          toggleTodoProvider(data[index].id)
+                                              .future,
+                                        );
+                                        ref.invalidate(getAllTodosProvider);
+                                      },
+                                    ),
+                                    trailing: IconButton(
                                       icon: const Icon(Icons.delete),
                                       onPressed: () async {
                                         await ref.read(
-                                          deleteTodoProvider(data[index].id)
-                                              .future,
-                                        );
+                                            DeleteTodoProvider(data[index].id)
+                                                .future);
                                         ref.invalidate(getAllTodosProvider);
                                       },
                                     ),
@@ -97,8 +102,17 @@ class TodoPage extends ConsumerWidget {
               padding: EdgeInsets.symmetric(horizontal: 20.w),
               child: Column(
                 children: [
+                  SizedBox(height: 4.h),
                   TextField(
                     controller: textEditingController,
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(26),
+                      FilteringTextInputFormatter.deny(RegExp(r' ')),
+                    ],
+                    decoration: const InputDecoration(
+                      filled: true,
+                      hintText: "Add a new task...",
+                    ),
                     onSubmitted: (_) async {
                       await addTask(ref);
                     },
@@ -116,6 +130,7 @@ class TodoPage extends ConsumerWidget {
                       await addTask(ref);
                     },
                   ),
+                  SizedBox(height: 8.h),
                 ],
               ),
             ),
@@ -126,6 +141,7 @@ class TodoPage extends ConsumerWidget {
   }
 
   Future<void> addTask(WidgetRef ref) async {
+    final textEditingController = ref.watch(textEditingControllerProvider);
     await ref.read(
       createTodoProvider(textEditingController.text).future,
     );

@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'todo.g.dart';
 
@@ -13,3 +15,7 @@ class Todo {
   @Index(type: IndexType.value)
   bool done;
 }
+
+@Riverpod(keepAlive: true)
+TextEditingController textEditingController(TextEditingControllerRef ref) =>
+    TextEditingController();

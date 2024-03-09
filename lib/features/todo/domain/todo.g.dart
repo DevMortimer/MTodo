@@ -693,3 +693,26 @@ extension TodoQueryProperty on QueryBuilder<Todo, Todo, QQueryProperty> {
     });
   }
 }
+
+// **************************************************************************
+// RiverpodGenerator
+// **************************************************************************
+
+String _$textEditingControllerHash() =>
+    r'aab034a16c16b69a8ca0042d59711b6cdaafb62f';
+
+/// See also [textEditingController].
+@ProviderFor(textEditingController)
+final textEditingControllerProvider = Provider<TextEditingController>.internal(
+  textEditingController,
+  name: r'textEditingControllerProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$textEditingControllerHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef TextEditingControllerRef = ProviderRef<TextEditingController>;
+// ignore_for_file: type=lint
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

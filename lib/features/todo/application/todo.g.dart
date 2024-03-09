@@ -300,6 +300,134 @@ class _UpdateTodoProviderElement extends AutoDisposeFutureProviderElement<void>
   String get newDetail => (origin as UpdateTodoProvider).newDetail;
 }
 
+String _$toggleTodoHash() => r'f72490eec1768a6dfeec58057b0aec4e69719fdb';
+
+/// See also [toggleTodo].
+@ProviderFor(toggleTodo)
+const toggleTodoProvider = ToggleTodoFamily();
+
+/// See also [toggleTodo].
+class ToggleTodoFamily extends Family<AsyncValue<void>> {
+  /// See also [toggleTodo].
+  const ToggleTodoFamily();
+
+  /// See also [toggleTodo].
+  ToggleTodoProvider call(
+    int id,
+  ) {
+    return ToggleTodoProvider(
+      id,
+    );
+  }
+
+  @override
+  ToggleTodoProvider getProviderOverride(
+    covariant ToggleTodoProvider provider,
+  ) {
+    return call(
+      provider.id,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'toggleTodoProvider';
+}
+
+/// See also [toggleTodo].
+class ToggleTodoProvider extends AutoDisposeFutureProvider<void> {
+  /// See also [toggleTodo].
+  ToggleTodoProvider(
+    int id,
+  ) : this._internal(
+          (ref) => toggleTodo(
+            ref as ToggleTodoRef,
+            id,
+          ),
+          from: toggleTodoProvider,
+          name: r'toggleTodoProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$toggleTodoHash,
+          dependencies: ToggleTodoFamily._dependencies,
+          allTransitiveDependencies:
+              ToggleTodoFamily._allTransitiveDependencies,
+          id: id,
+        );
+
+  ToggleTodoProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.id,
+  }) : super.internal();
+
+  final int id;
+
+  @override
+  Override overrideWith(
+    FutureOr<void> Function(ToggleTodoRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: ToggleTodoProvider._internal(
+        (ref) => create(ref as ToggleTodoRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        id: id,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<void> createElement() {
+    return _ToggleTodoProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is ToggleTodoProvider && other.id == id;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, id.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+mixin ToggleTodoRef on AutoDisposeFutureProviderRef<void> {
+  /// The parameter `id` of this provider.
+  int get id;
+}
+
+class _ToggleTodoProviderElement extends AutoDisposeFutureProviderElement<void>
+    with ToggleTodoRef {
+  _ToggleTodoProviderElement(super.provider);
+
+  @override
+  int get id => (origin as ToggleTodoProvider).id;
+}
+
 String _$deleteTodoHash() => r'a79b2de796e67df7e7c279003c1769c48dd9fc51';
 
 /// See also [deleteTodo].
