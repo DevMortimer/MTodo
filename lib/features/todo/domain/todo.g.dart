@@ -21,6 +21,11 @@ const TodoSchema = CollectionSchema(
       id: 0,
       name: r'details',
       type: IsarType.string,
+    ),
+    r'done': PropertySchema(
+      id: 1,
+      name: r'done',
+      type: IsarType.bool,
     )
   },
   estimateSize: _todoEstimateSize,
@@ -39,6 +44,19 @@ const TodoSchema = CollectionSchema(
           name: r'details',
           type: IndexType.value,
           caseSensitive: true,
+        )
+      ],
+    ),
+    r'done': IndexSchema(
+      id: -1851369787174193622,
+      name: r'done',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'done',
+          type: IndexType.value,
+          caseSensitive: false,
         )
       ],
     )
@@ -68,6 +86,7 @@ void _todoSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeString(offsets[0], object.details);
+  writer.writeBool(offsets[1], object.done);
 }
 
 Todo _todoDeserialize(
@@ -78,6 +97,7 @@ Todo _todoDeserialize(
 ) {
   final object = Todo(
     details: reader.readString(offsets[0]),
+    done: reader.readBoolOrNull(offsets[1]) ?? false,
   );
   object.id = id;
   return object;
@@ -92,6 +112,8 @@ P _todoDeserializeProp<P>(
   switch (propertyId) {
     case 0:
       return (reader.readString(offset)) as P;
+    case 1:
+      return (reader.readBoolOrNull(offset) ?? false) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -120,6 +142,14 @@ extension TodoQueryWhereSort on QueryBuilder<Todo, Todo, QWhere> {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         const IndexWhereClause.any(indexName: r'details'),
+      );
+    });
+  }
+
+  QueryBuilder<Todo, Todo, QAfterWhere> anyDone() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'done'),
       );
     });
   }
@@ -325,6 +355,49 @@ extension TodoQueryWhere on QueryBuilder<Todo, Todo, QWhereClause> {
       }
     });
   }
+
+  QueryBuilder<Todo, Todo, QAfterWhereClause> doneEqualTo(bool done) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'done',
+        value: [done],
+      ));
+    });
+  }
+
+  QueryBuilder<Todo, Todo, QAfterWhereClause> doneNotEqualTo(bool done) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'done',
+              lower: [],
+              upper: [done],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'done',
+              lower: [done],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'done',
+              lower: [done],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'done',
+              lower: [],
+              upper: [done],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
 }
 
 extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
@@ -456,6 +529,15 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Todo, Todo, QAfterFilterCondition> doneEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'done',
+        value: value,
+      ));
+    });
+  }
+
   QueryBuilder<Todo, Todo, QAfterFilterCondition> idEqualTo(Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -525,6 +607,18 @@ extension TodoQuerySortBy on QueryBuilder<Todo, Todo, QSortBy> {
       return query.addSortBy(r'details', Sort.desc);
     });
   }
+
+  QueryBuilder<Todo, Todo, QAfterSortBy> sortByDone() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'done', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Todo, Todo, QAfterSortBy> sortByDoneDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'done', Sort.desc);
+    });
+  }
 }
 
 extension TodoQuerySortThenBy on QueryBuilder<Todo, Todo, QSortThenBy> {
@@ -537,6 +631,18 @@ extension TodoQuerySortThenBy on QueryBuilder<Todo, Todo, QSortThenBy> {
   QueryBuilder<Todo, Todo, QAfterSortBy> thenByDetailsDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'details', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Todo, Todo, QAfterSortBy> thenByDone() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'done', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Todo, Todo, QAfterSortBy> thenByDoneDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'done', Sort.desc);
     });
   }
 
@@ -560,6 +666,12 @@ extension TodoQueryWhereDistinct on QueryBuilder<Todo, Todo, QDistinct> {
       return query.addDistinctBy(r'details', caseSensitive: caseSensitive);
     });
   }
+
+  QueryBuilder<Todo, Todo, QDistinct> distinctByDone() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'done');
+    });
+  }
 }
 
 extension TodoQueryProperty on QueryBuilder<Todo, Todo, QQueryProperty> {
@@ -572,6 +684,12 @@ extension TodoQueryProperty on QueryBuilder<Todo, Todo, QQueryProperty> {
   QueryBuilder<Todo, String, QQueryOperations> detailsProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'details');
+    });
+  }
+
+  QueryBuilder<Todo, bool, QQueryOperations> doneProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'done');
     });
   }
 }
