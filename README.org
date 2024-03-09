@@ -1,5 +1,7 @@
-* mtodo
+* MTodo
 
-[[./assets/screenshot.png]]
+[[./assets/screenshot1.png]]
+
+[[./assets/screenshot2.png]]
 
 ToDo application I made for practice.

@@ -1,10 +1,11 @@
+import 'package:easy_dynamic_theme/easy_dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mtodo/features/todo/todo.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 void main() async {
-  runApp(const ProviderScope(child: MainApp()));
+  runApp(ProviderScope(child: EasyDynamicThemeWidget(child: const MainApp())));
 }
 
 class MainApp extends StatelessWidget {
@@ -15,6 +16,9 @@ class MainApp extends StatelessWidget {
     return ResponsiveSizer(builder: (context, orientation, screenType) {
       return MaterialApp(
         debugShowCheckedModeBanner: false,
+        theme: ThemeData.light(),
+        darkTheme: ThemeData.dark(),
+        themeMode: EasyDynamicTheme.of(context).themeMode,
         home: TodoPage(),
       );
     });

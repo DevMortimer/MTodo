@@ -9,7 +9,17 @@ part 'todo.g.dart';
 @riverpod
 Future<List<Todo>> getAllTodos(GetAllTodosRef ref) async {
   final isar = await ref.watch(getDatabaseProvider.future);
-  return isar.todos.where(sort: Sort.desc).findAll();
+  List<Todo> todos = await isar.todos.where(sort: Sort.asc).findAll();
+
+  todos.sort((a, b) {
+    if (a.done == b.done) {
+      return a.id.compareTo(b.id);
+    } else {
+      return a.done ? 1 : -1;
+    }
+  });
+
+  return todos;
 }
 
 // READ
